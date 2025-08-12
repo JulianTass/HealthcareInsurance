@@ -1,0 +1,32 @@
+{
+    "name": "hcf-healthcare-api",
+    "version": "1.0.0",
+    "description": "HCF Healthcare Insurance Authentication API",
+    "main": "server.js",
+    "scripts": {
+      "start": "node api.js",
+      "dev": "nodemon api.js",
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+      "healthcare",
+      "insurance",
+      "authentication",
+      "api",
+      "nodejs",
+      "express"
+    ],
+    "author": "HCF Healthcare",
+    "license": "MIT",
+    "dependencies": {
+      "express": "^4.18.2",
+      "cors": "^2.8.5"
+    },
+    "devDependencies": {
+      "nodemon": "^3.0.1"
+    },
+    "engines": {
+      "node": ">=14.0.0"
+    },
+    "type": "commonjs"
+  }

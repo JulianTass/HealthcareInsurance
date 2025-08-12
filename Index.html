@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HCF - Healthcare Insurance</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --hcf-pink: #E91E63;
+            --hcf-dark-pink: #C2185B;
+            --hcf-purple: #6A1B9A;
+            --hcf-teal: #26C6DA;
+            --hcf-light-teal: #4DD0E1;
+            --hcf-dark: #2C2C2E;
+            --hcf-light-gray: #F8F9FA;
+            --hcf-white: #FFFFFF;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: var(--hcf-dark);
+            min-height: 100vh;
+        }
+
+        /* Desktop Styles */
+        .desktop-container {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .desktop-login-page {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .desktop-dashboard-page {
+            display: none;
+            width: 100%;
+        }
+
+        .desktop-dashboard-page.active {
+            display: flex;
+        }
+
+        .desktop-sidebar {
+            width: 320px;
+            background: var(--hcf-white);
+            box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+
+        .desktop-main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .desktop-login {
+            max-width: 450px;
+            width: 100%;
+            background: var(--hcf-white);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .desktop-login h2 {
+            color: var(--hcf-pink);
+            margin-bottom: 2rem;
+            text-align: center;
+            font-size: 2rem;
+        }
+
+        .desktop-login .logo {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .desktop-login .logo h2 {
+            color: var(--hcf-pink);
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .desktop-login .logo p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo h2 {
+            color: var(--hcf-pink);
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--hcf-dark);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--hcf-pink);
+            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: var(--hcf-pink);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--hcf-dark-pink);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(233, 30, 99, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Mobile Styles */
+        .mobile-container {
+            display: none;
+            min-height: 100vh;
+            background: white;
+            position: relative;
+        }
+
+        /* Mobile Login Screen - matching HCF app design */
+        .mobile-login {
+            min-height: 100vh;
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-top-banner {
+            background: var(--hcf-pink);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .mobile-close-banner {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .mobile-logo-section {
+            text-align: center;
+            padding: 2rem 1rem 1rem 1rem;
+            background: white;
+        }
+
+        .mobile-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--hcf-pink);
+            border-radius: 20px;
+            margin: 0 auto 1rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .mobile-first-time {
+            color: #666;
+            margin: 1rem 0;
+            font-size: 1rem;
+        }
+
+        .mobile-register-link {
+            color: var(--hcf-pink);
+            text-decoration: underline;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+
+        .mobile-form-section {
+            padding: 0 1rem;
+            flex: 1;
+        }
+
+        .mobile-form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .mobile-form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .mobile-form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .mobile-form-group input:focus {
+            outline: none;
+            border-color: var(--hcf-pink);
+            box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.1);
+        }
+
+        .mobile-remember {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0 2rem 0;
+            gap: 0.5rem;
+        }
+
+        .mobile-remember input[type="checkbox"] {
+            width: auto;
+        }
+
+        .mobile-remember label {
+            font-weight: normal;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .mobile-signin-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #ccc;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .mobile-signin-btn.active {
+            background: var(--hcf-pink);
+            cursor: pointer;
+        }
+
+        .mobile-signin-btn:hover.active {
+            background: var(--hcf-dark-pink);
+        }
+
+        /* Code Generation Section */
+        .mobile-code-section {
+            display: none;
+            padding: 2rem 1rem;
+            text-align: center;
+            background: white;
+            min-height: 100vh;
+        }
+
+        .mobile-code-section.show {
+            display: block;
+        }
+
+        .code-display {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--hcf-pink);
+            letter-spacing: 8px;
+            margin: 2rem 0;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+
+        .code-instructions {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .generate-code-btn {
+            width: 100%;
+            max-width: 300px;
+            padding: 1rem;
+            background: var(--hcf-pink);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 2rem auto;
+            display: block;
+        }
+
+        .generate-code-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .code-status {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .code-status.show {
+            display: block;
+        }
+
+        .code-status.loading {
+            background: rgba(255,193,7,0.1);
+            border: 1px solid rgba(255,193,7,0.3);
+            color: #856404;
+        }
+
+        .code-status.success {
+            background: rgba(76,175,80,0.1);
+            border: 1px solid rgba(76,175,80,0.3);
+            color: #2e7d32;
+        }
+
+        .code-status.error {
+            background: rgba(244,67,54,0.1);
+            border: 1px solid rgba(244,67,54,0.3);
+            color: #c62828;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top-color: currentColor;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Mobile Dashboard */
+        .mobile-greeting {
+            margin: 0;
+            padding: 2rem 1rem 1rem 1rem;
+            text-align: center;
+            background: linear-gradient(135deg, #E91E63 0%, #AD1457 50%, #880E4F 100%);
+        }
+
+        .mobile-greeting h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .mobile-avatar {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border: 3px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            margin: 1rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .mobile-policy-info {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 1rem;
+            margin: 1rem;
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .mobile-policy-info div {
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-policy-info div:last-child {
+            margin-bottom: 0;
+        }
+
+        .mobile-content {
+            background: white;
+            border-radius: 25px 25px 0 0;
+            min-height: calc(100vh - 280px);
+            padding: 2rem 1rem;
+            margin-top: 2rem;
+        }
+
+        .mobile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .mobile-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .mobile-card-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--hcf-pink);
+            border-radius: 12px;
+            margin: 0 auto 1rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .mobile-card h3 {
+            font-size: 1rem;
+            color: var(--hcf-dark);
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .mobile-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 1rem 0;
+            border-top: 1px solid #E0E0E0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-item {
+            text-align: center;
+            color: #757575;
+            text-decoration: none;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active {
+            color: var(--hcf-pink);
+        }
+
+        .nav-item span {
+            display: block;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .desktop-container {
+                display: none;
+            }
+            .mobile-container {
+                display: block;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .desktop-container {
+                display: flex;
+            }
+            .mobile-container {
+                display: none;
+            }
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            display: block;
+        }
+
+        .dashboard-content {
+            display: none;
+        }
+
+        .dashboard-content.active {
+            display: block;
+        }
+
+        .dashboard-header {
+            background: var(--hcf-white);
+            padding: 2.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-header h1 {
+            color: var(--hcf-pink);
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-card h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+
+        .profile-section {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .profile-field {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .profile-field:last-child {
+            border-bottom: none;
+        }
+
+        .profile-field strong {
+            color: var(--hcf-dark);
+            font-weight: 600;
+        }
+
+        .sidebar-nav {
+            margin-top: 2rem;
+        }
+
+        .sidebar-nav-item {
+            padding: 1rem;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            color: var(--hcf-dark);
+            font-weight: 500;
+        }
+
+        .sidebar-nav-item:hover {
+            background: var(--hcf-light-gray);
+        }
+
+        .sidebar-nav-item.active {
+            background: var(--hcf-pink);
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .activity-item {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #F8F9FA;
+            border-radius: 10px;
+            border-left: 4px solid var(--hcf-pink);
+        }
+
+        .activity-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .activity-details {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+
+        .activity-status {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-approved { color: #4CAF50; }
+        .status-processing { color: #FF9800; }
+        .status-completed { color: #4CAF50; }
+    </style>
+</head>
+<body>
+    <!-- Desktop Version -->
+    <div class="desktop-container">
+        <!-- Full Page Login -->
+        <div id="desktopLoginPage" class="desktop-login-page">
+            <div class="desktop-login">
+                <div class="logo">
+                    <h2>HCF</h2>
+                    <p>Healthcare Insurance</p>
+                </div>
+                <h2>Welcome Back</h2>
+                <form id="desktopLoginForm">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Sign In</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="desktopDashboardPage" class="desktop-dashboard-page">
+            <div class="desktop-sidebar">
+                <div class="logo">
+                    <h2>HCF</h2>
+                </div>
+                
+                <div class="dashboard">
+                    <nav class="sidebar-nav">
+                        <div class="sidebar-nav-item active" onclick="showSection('dashboard')">
+                            🏠 Dashboard
+                        </div>
+                        <div class="sidebar-nav-item" onclick="showSection('profile')">
+                            👤 My Profile
+                        </div>
+                        <div class="sidebar-nav-item" onclick="showSection('policy')">
+                            📋 Policy Details
+                        </div>
+                        <div class="sidebar-nav-item" onclick="showSection('claims')">
+                            🏥 Make a Claim
+                        </div>
+                        <div class="sidebar-nav-item" onclick="logout()" style="color: var(--hcf-pink); margin-top: 2rem;">
+                            🚪 Logout
+                        </div>
+                    </nav>
+                </div>
+            </div>
+            
+            <div class="desktop-main">
+                <div id="desktopMainContent" class="dashboard-content active">
+                    <div class="dashboard-header">
+                        <h1>Welcome to your HCF Dashboard</h1>
+                        <p>Manage your healthcare insurance with ease</p>
+                    </div>
+                    
+                    <div class="dashboard-cards">
+                        <div class="dashboard-card">
+                            <h3 style="color: var(--hcf-pink);">Quick Stats</h3>
+                            <div class="profile-field">
+                                <strong>Policy Status:</strong>
+                                <span style="color: #4CAF50;">✓ Active</span>
+                            </div>
+                            <div class="profile-field">
+                                <strong>Next Payment:</strong>
+                                <span>15 Sep 2025</span>
+                            </div>
+                            <div class="profile-field">
+                                <strong>Claims This Year:</strong>
+                                <span>3 claims - $1,240 claimed</span>
+                            </div>
+                            <div class="profile-field">
+                                <strong>Remaining Benefits:</strong>
+                                <span>Dental: $680, Optical: $300</span>
+                            </div>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <h3 style="color: var(--hcf-pink);">Recent Activity</h3>
+                            <div class="activity-item">
+                                <div class="activity-title">Dental Claim</div>
+                                <div class="activity-details">Dr. Smith Dental - $180.00</div>
+                                <div class="activity-status status-approved">✓ Approved - 5 Aug 2025</div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-title">Optical Claim</div>
+                                <div class="activity-details">Specsavers - $420.00</div>
+                                <div class="activity-status status-processing">⏳ Processing - 1 Aug 2025</div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-title">Premium Payment</div>
+                                <div class="activity-details">Monthly payment received</div>
+                                <div class="activity-status status-completed">✓ Completed - 15 Jul 2025</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="profileSection" class="dashboard-content">
+                    <div class="profile-section">
+                        <h2 style="margin-bottom: 2rem; color: var(--hcf-pink);">Personal Information</h2>
+                        <div class="profile-field">
+                            <strong>Full Name:</strong>
+                            <span>John Smith</span>
+                        </div>
+                        <div class="profile-field">
+                            <strong>Email:</strong>
+                            <span>john.smith@email.com</span>
+                        </div>
+                        <div class="profile-field">
+                            <strong>Phone:</strong>
+                            <span>+61 400 123 456</span>
+                        </div>
+                        <div class="profile-field">
+                            <strong>Address:</strong>
+                            <span>123 Health Street, Sydney NSW 2000</span>
+                        </div>
+                        <div class="profile-field">
+                            <strong>Date of Birth:</strong>
+                            <span>15/03/1985</span>
+                        </div>
+                        <div class="profile-field">
+                            <strong>Member ID:</strong>
+                            <span>HCF123456789</span>
+                        </div>
+                        <div class="profile-field">
+                            <strong>Emergency Contact:</strong>
+                            <span>Sarah Smith - +61 400 987 654</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="policySection" class="dashboard-content">
+                    <div class="dashboard-card">
+                        <h2 style="margin-bottom: 2rem; color: var(--hcf-pink);">Policy Details & Cover</h2>
+                        <div class="profile-field">
+                            <strong>Policy Type:</strong>
+                            <span>Top Hospital & Extras</span>
+                        </div>
+                        <div class="profile-field">
+                            <strong>Policy Number:</strong>
+                            <span>POL-789123456</span>
+                        </div>
+                        <div class="profile-field">
+                            <strong>Coverage Start:</strong>
+                            <span>01/01/2024</span>
+                        </div>
+                        <div class="profile-field">
+                            <strong>Annual Premium:</strong>
+                            <span>$2,850.00</span>
+                        </div>
+                        <div class="profile-field">
+                            <strong>Excess:</strong>
+                            <span>$500 per person/year</span>
+                        </div>
+                        <div class="profile-field">
+                            <strong>Hospital Cover:</strong>
+                            <span>✓ Private hospital accommodation, Surgery, Specialist treatment</span>
+                        </div>
+                        <div class="profile-field">
+                            <strong>Extras Cover:</strong>
+                            <span>✓ Dental (80% back up to $800), Optical (80% back up to $400)</span>
+                        </div>
+                        <div class="profile-field">
+                            <strong>Physiotherapy:</strong>
+                            <span>✓ 80% back up to $600 per year</span>
+                        </div>
+                        <div class="profile-field">
+                            <strong>Massage Therapy:</strong>
+                            <span>✓ 80% back up to $400 per year</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="claimsSection" class="dashboard-content">
+                    <div class="dashboard-card">
+                        <h2 style="margin-bottom: 2rem; color: var(--hcf-pink);">Make a Claim</h2>
+                        <form id="claimForm">
+                            <div class="form-group">
+                                <label for="claimType">Claim Type</label>
+                                <select id="claimType" required>
+                                    <option value="">Select claim type</option>
+                                    <option value="hospital">Hospital Treatment</option>
+                                    <option value="dental">Dental</option>
+                                    <option value="optical">Optical</option>
+                                    <option value="physio">Physiotherapy</option>
+                                    <option value="massage">Massage Therapy</option>
+                                    <option value="other">Other Extras</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="treatmentDate">Treatment Date</label>
+                                <input type="date" id="treatmentDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="provider">Healthcare Provider</label>
+                                <input type="text" id="provider" placeholder="Provider name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="amount">Claim Amount ($)</label>
+                                <input type="number" id="amount" step="0.01" placeholder="0.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description (Optional)</label>
+                                <input type="text" id="description" placeholder="Brief description of treatment">
+                            </div>
+                            <div class="form-group">
+                                <label for="receipt">Upload Receipt</label>
+                                <input type="file" id="receipt" accept="image/*,application/pdf">
+                            </div>
+                            <button type="submit" class="btn-primary">Submit Claim</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Version -->
+    <div class="mobile-container">
+        <!-- Mobile Login Screen -->
+        <div id="mobileLogin">
+            <!-- Top Banner -->
+            <div class="mobile-top-banner">
+                Your 2024-25 Private Health Insurance Tax Statement is now available in your inbox in our app or online member services.
+                <button class="mobile-close-banner">×</button>
+            </div>
+
+            <!-- Logo and HCF Section -->
+            <div class="mobile-logo-section">
+                <div class="mobile-logo">HCF</div>
+                
+                <div class="mobile-first-time">
+                    First time to member services? You need to register before you can log in.
+                </div>
+                
+                <a href="#" class="mobile-register-link">Register</a>
+            </div>
+
+            <!-- Login Form -->
+            <div class="mobile-form-section">
+                <form id="mobileLoginForm">
+                    <div class="mobile-form-group">
+                        <label for="membershipNumber">Membership number</label>
+                        <input type="text" id="membershipNumber" name="membershipNumber" required>
+                    </div>
+
+                    <div class="mobile-form-group">
+                        <label for="mobilePassword">Password</label>
+                        <input type="password" id="mobilePassword" name="password" required>
+                    </div>
+
+                    <div class="mobile-remember">
+                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        <label for="rememberMe">Remember my membership number</label>
+                    </div>
+
+                    <button type="submit" id="mobileSignInBtn" class="mobile-signin-btn">Sign in</button>
+                </form>
+
+                <!-- Generate Code Button -->
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button onclick="generateCodeDirectly()" class="generate-code-btn" id="generateCodeBtn">Check for New Codes</button>
+                    <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">
+                        Make a POST request to the API, then click this button
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Display Screen -->
+        <div id="mobileCodeSection" class="mobile-code-section">
+            <div class="mobile-logo-section">
+                <div class="mobile-logo">HCF</div>
+                <h2 style="color: var(--hcf-pink); margin-top: 1rem;">Your Authentication Code</h2>
+            </div>
+
+            <div class="code-instructions">
+                Use this code to authenticate your session:
+            </div>
+
+            <div class="code-display" id="codeDisplay">
+                ----
+            </div>
+
+            <div class="code-status" id="codeStatus">
+                <div id="statusMessage">Ready to generate code</div>
+                <div id="statusDetails"></div>
+            </div>
+
+            <button onclick="showLoginScreen()" class="generate-code-btn" style="background: #666;">
+                Back to Login
+            </button>
+        </div>
+        
+        <!-- Mobile Dashboard -->
+        <div id="mobileDashboard" class="hidden">
+            <div class="mobile-greeting">
+                <h1>GOOD MORNING<br>JOHN</h1>
+                <div class="mobile-avatar">👤</div>
+                <div class="mobile-policy-info">
+                    <div><strong>Policy:</strong> Top Hospital & Extras</div>
+                    <div><strong>Number:</strong> POL-789123456</div>
+                    <div><strong>Member ID:</strong> HCF123456789</div>
+                </div>
+            </div>
+            
+            <div class="mobile-content">
+                <div class="mobile-grid">
+                    <div class="mobile-card" onclick="showMobileSection('profile')">
+                        <div class="mobile-card-icon">👤</div>
+                        <h3>My Profile</h3>
+                    </div>
+                    <div class="mobile-card" onclick="showMobileSection('policy')">
+                        <div class="mobile-card-icon">📋</div>
+                        <h3>My Cover</h3>
+                    </div>
+                    <div class="mobile-card" onclick="showMobileSection('claims')">
+                        <div class="mobile-card-icon">🏥</div>
+                        <h3>Make a claim</h3>
+                    </div>
+                    <div class="mobile-card" onclick="showMobileSection('payments')">
+                        <div class="mobile-card-icon">💰</div>
+                        <h3>Manage payments</h3>
+                    </div>
+                    <div class="mobile-card" onclick="openChat()">
+                        <div class="mobile-card-icon">💬</div>
+                        <h3>Chat with us</h3>
+                    </div>
+                    <div class="mobile-card" onclick="showMobileSection('benefits')">
+                        <div class="mobile-card-icon">🧮</div>
+                        <h3>Calculate benefits</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mobile-bottom-nav">
+                <a href="#" class="nav-item active">
+                    🏠<span>Home</span>
+                </a>
+                <a href="#" class="nav-item">
+                    🛡️<span>Cover</span>
+                </a>
+                <a href="#" class="nav-item">
+                    📋<span>Claims</span>
+                </a>
+                <a href="#" class="nav-item" onclick="openChat()">
+                    💬<span>Chat</span>
+                </a>
+                <a href="#" class="nav-item" onclick="logout(); return false;">
+                    🚪<span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+   <script src="script.js"></script>
+</body>
+</html>
