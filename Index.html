@@ -265,6 +265,37 @@
             box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.1);
         }
 
+        /* Mobile Voice Call Button */
+.mobile-voice-btn {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    width: 50px;
+    height: 50px;
+    background: var(--hcf-pink);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    display: none; /* Hidden by default */
+}
+
+.mobile-voice-btn:hover {
+    background: var(--hcf-dark-pink);
+    transform: scale(1.1);
+}
+
+/* Show only on mobile */
+@media (max-width: 768px) {
+    .mobile-voice-btn {
+        display: block;
+    }
+}
+
         .mobile-remember {
             display: flex;
             align-items: center;
@@ -757,9 +788,9 @@
                         <div class="dashboard-card">
                             <h3 style="color: var(--hcf-pink);">Recent Activity</h3>
                             <div class="activity-item">
-                                <div class="activity-title">Dental Claim</div>
-                                <div class="activity-details">Dr. Smith Dental - $180.00</div>
-                                <div class="activity-status status-approved">✓ Approved - 5 Aug 2025</div>
+                                <div class="activity-title">Remedial Massage</div>
+                                <div class="activity-details">Active Physio - $200</div>
+                                <div class="activity-status status-processing">✓ ⏳ Processing - 21 Aug 2025</div>
                             </div>
                             <div class="activity-item">
                                 <div class="activity-title">Optical Claim</div>
@@ -1032,6 +1063,9 @@
             </div>
         </div>
     </div>
+    <button class="mobile-voice-btn" onclick="makeCall()" title="Call HCF Support">
+        📞
+    </button>
 
    <script src="script.js"></script>
 </body>

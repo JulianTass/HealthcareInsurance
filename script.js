@@ -387,64 +387,116 @@ function showLoginScreen() {
     clearInterval(countdownInterval);
 }
 
+function makeCall() {
+    // This will open the phone dialer on mobile devices
+    window.location.href = 'tel:+61281884705,87651';
+}
+
 // Genesys Chat Integration
 function openChat() {
-    console.log('💬 Opening Genesys chat...');
+    // Determine if mobile or desktop
+    const isMobile = window.innerWidth <= 768;
     
-    // Check if Genesys is already loaded
-    if (window.Genesys) {
-        console.log('✅ Genesys already loaded, opening chat');
-        try {
-            window.Genesys('command', 'WebChat.open');
-            return;
-        } catch (error) {
-            console.log('⚠️ Error with existing Genesys, reinitializing...', error);
-        }
+    // Choose deployment ID based on device
+    const deploymentId = isMobile ? 
+        '50dcb71a-3f0b-4855-a4ed-f2ae701b8142' :  // Mobile deployment ID
+        'd19620c2-515c-4897-afbc-b22360e6fc67';   // Desktop deployment ID
+    
+    // If Messenger is already loaded, just open it and set variables
+    if (window.Genesys && window.Genesys.isBooted) {
+        // Subscribe to database ready event first
+        window.Genesys("subscribe", "Database.ready", function() {
+            console.log("✅ Database ready - setting Authenticated variable");
+            
+            // Now set the Authenticated variable
+            window.Genesys("command", "Database.set", {
+                messaging: {
+                    customAttributes: {
+                        Authenticated: "true"
+                    }
+                }
+            });
+        });
+        
+        window.Genesys("command", "Messenger.open", {},
+            function() {
+                console.log("✅ Messenger opened");
+            },
+            function() {
+                console.log("⚠️ Messenger already open, closing...");
+                window.Genesys("command", "Messenger.close");
+            }
+        );
+        return;
     }
-    
-    // Initialize Genesys using the working script pattern
+
+    // Load Messenger bootstrap with appropriate deployment ID
     (function (g, e, n, es, ys) {
         g['_genesysJs'] = e;
         g[e] = g[e] || function () {
             (g[e].q = g[e].q || []).push(arguments)
         };
-        g[e].t = 1 * new Date();
+        g[e].t = Date.now();
         g[e].c = es;
-        ys = document.createElement('script'); 
-        ys.async = 1; 
-        ys.src = n; 
-        ys.charset = 'utf-8'; 
-        
-        ys.onload = function() {
-            console.log('✅ Genesys loaded successfully');
-            
-            // Wait a moment then open chat
-            setTimeout(function() {
-                try {
-                    console.log('🚀 Opening WebChat...');
-                    window.Genesys('command', 'WebChat.open');
-                } catch (error) {
-                    console.error('❌ Error opening chat:', error);
-                    fallbackChatOption();
-                }
-            }, 1000);
+
+        ys = document.createElement('script');
+        ys.async = 1;
+        ys.src = n;
+        ys.charset = 'utf-8';
+        ys.onload = function () {
+            g[e]('boot');
+            g[e]('subscribe', 'Messenger.ready', function () {
+                console.log(`✅ Messenger ready (${isMobile ? 'Mobile' : 'Desktop'})`);
+                
+                // Subscribe to database ready event first
+                g[e]("subscribe", "Database.ready", function() {
+                    console.log("✅ Database ready - setting Authenticated variable");
+                    
+                    // Now set the Authenticated variable
+                    g[e]("command", "Database.set", {
+                        messaging: {
+                            customAttributes: {
+                                Authenticated: "true"
+                            }
+                        }
+                    });
+                });
+                
+                g[e]("command", "Messenger.open");
+            });
         };
-        
-        ys.onerror = function() {
-            console.error('❌ Failed to load Genesys script');
-            fallbackChatOption();
-        };
-        
+
         document.head.appendChild(ys);
-    })(window, 'Genesys', 'https://apps.mypurecloud.com.au/genesys-bootstrap/genesys.min.js', {
-        environment: 'prod-apse2',
-        deploymentId: '50dcb71a-3f0b-4855-a4ed-f2ae701b8142'
-    });
+    })(window, 'Genesys',
+        'https://apps.mypurecloud.com.au/genesys-bootstrap/genesys.min.js',
+        {
+            environment: 'prod-apse2',
+            deploymentId: deploymentId
+        }
+    );
+
+    window.Genesys.isBooted = true;
+}
+
+function handleDesktopLogin(e) {
+    e.preventDefault();
+    const desktopLoginPage = document.getElementById('desktopLoginPage');
+    const desktopDashboardPage = document.getElementById('desktopDashboardPage');
+    
+    if (desktopLoginPage) desktopLoginPage.style.display = 'none';
+    if (desktopDashboardPage) desktopDashboardPage.classList.add('active');
+    
+    // Trigger chat to open after successful desktop login
+    setTimeout(() => {
+        openChat();  // Same function, different deployment ID
+    }, 1000);
 }
 
 function fallbackChatOption() {
     alert('Chat is temporarily unavailable. Please call us at 13 13 34 for assistance.');
 }
+
+
 
 // Status update functions
 function updateStatus(type, message, details = '') {
@@ -622,15 +674,6 @@ function handleClaimFormSubmit(e) {
     e.target.reset();
 }
 
-// Desktop Login Handler
-function handleDesktopLogin(e) {
-    e.preventDefault();
-    const desktopLoginPage = document.getElementById('desktopLoginPage');
-    const desktopDashboardPage = document.getElementById('desktopDashboardPage');
-    
-    if (desktopLoginPage) desktopLoginPage.style.display = 'none';
-    if (desktopDashboardPage) desktopDashboardPage.classList.add('active');
-}
 
 // Mobile Login Handler
 function handleMobileLogin(e) {
