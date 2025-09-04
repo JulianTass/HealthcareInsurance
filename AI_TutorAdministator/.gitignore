@@ -1,0 +1,14 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Specific environments
+.env.development
+.env.staging
+.env.production
+.env.test
+
+# Legacy naming
+.environment
+env.local
